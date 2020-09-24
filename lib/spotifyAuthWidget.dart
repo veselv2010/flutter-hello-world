@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:playlist_app/spotifyClient.dart';
-import 'package:playlist_app/spotifyTracksWidget.dart';
+import 'package:playlist_app/spotifyTracksPage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:playlist_app/constants.dart' as Constants;
-import 'package:playlist_app/savedTracksModel.dart';
+import 'package:playlist_app/models/spotifyTracksModel.dart';
 
 class SpotifyAuthWidget extends StatefulWidget {
   @override
@@ -55,6 +55,6 @@ class _SpotifyAuthWidgetState extends State<SpotifyAuthWidget> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SpotifyTracksWidget(trackList)));
+            builder: (context) => SpotifyTracksPage(trackList)));
   }
 }

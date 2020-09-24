@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:playlist_app/savedTracksModel.dart';
+import 'package:playlist_app/models/spotifyTracksModel.dart';
 
 class SpotifyTracksWidget extends StatefulWidget {
   final List<Track> tracks;
@@ -21,9 +21,6 @@ class _SpotifyTracksWidgetState extends State<SpotifyTracksWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TrackList'),
-      ),
       body: ListView.builder(
         itemCount: _tracks.length,
         itemBuilder: (context, index) {
@@ -42,14 +39,33 @@ class TrackListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Row(children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.all(14.0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(track.name),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(track.name), 
-              Text(track.id),
-              ],
+              Text(_getAllArtists(track.artists)),
+              Text(_getFormattedDuration(track.durationMs)),
+            ],
           ),
         ]));
+  }
+
+  String _getAllArtists(List<Artists> artists) {
+    String res = "";
+    for (var a in artists) {
+      res += a.name;
+      if (artists.indexOf(a) != artists.length - 1) res += ", ";
+    }
+
+    return res;
+  }
+
+  String _getFormattedDuration(int durationMs) {
+    String seconds = ((durationMs % 60)).toString();
+    String res = '${(durationMs ~/ 1000 ~/ 60)}:';
+
+    return seconds.length > 1 ? res + seconds : res + "0" + seconds;
   }
 }

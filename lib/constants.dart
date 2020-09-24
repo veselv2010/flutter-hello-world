@@ -12,6 +12,7 @@ const String SCOPES =
 const String REDIRECT_URI = "https://blank.org/";
 const String ACCESS_TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const String SAVED_TRACKS_ENDPOINT = "https://api.spotify.com/v1/me/tracks";
+const String CURRENT_PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player";
 const String AUTH_URL =
     "https://accounts.spotify.com/authorize?client_id=$CLIENT_ID&response_type=code&redirect_uri=$REDIRECT_URI&state=fdsfdsfds&scope=$SCOPES&show_dialog=true/";
 

@@ -1,14 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'package:playlist_app/constants.dart' as Constants;
+import 'package:playlist_app/models/spotifyCurrentPlaybackModel.dart';
 import 'dart:convert';
-import 'savedTracksModel.dart';
+import 'models/spotifyTracksModel.dart';
 
 class SpotifyClient {
-  String _encodedAuth;
   List<Track> _cachedTracks;
 
   SpotifyClient() {
-    _encodedAuth = _getBase64Header();
     _cachedTracks = List();
   }
 
@@ -19,7 +18,7 @@ class SpotifyClient {
         'code': code,
         'redirect_uri': Constants.REDIRECT_URI
       }, headers: {
-        'Authorization': 'Basic $_encodedAuth'
+        'Authorization': 'Basic ${_getBase64Id()}'
       });
 
       Map<String, dynamic> map = jsonDecode(resp.body);
@@ -30,30 +29,44 @@ class SpotifyClient {
     }
   }
 
+  //TODO: че-нибудь нагуглить про дженерики
   Future<List<Track>> getSavedTracks(String accessToken, String url) async {
     url = url == null
         ? Constants.SAVED_TRACKS_ENDPOINT + "?limit=50" + "&offset=0"
         : url;
 
-    var resp =
-        await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
+    var resp = await http.get(url, headers: _getAuthHeader(accessToken));
 
     Map<String, dynamic> map = jsonDecode(resp.body);
-    SavedTracksModel model = SavedTracksModel.fromJson(map);
+    var model = SpotifyTracksModel.fromJson(map);
 
     model.items.forEach((element) => _cachedTracks.add(element.track));
 
     String nextUrl = model.next;
-    
-    if (nextUrl != null) 
-      await getSavedTracks(accessToken, nextUrl);
+
+    if (nextUrl != null) await getSavedTracks(accessToken, nextUrl);
 
     return _cachedTracks;
   }
 
-  String _getBase64Header() {
+  Future<SpotifyCurrentPlaybackModel> getCurrentPlaybackInfo(
+      String accessToken) async {
+    var resp = await http.get(Constants.CURRENT_PLAYBACK_ENDPOINT,
+        headers: _getAuthHeader(accessToken));
+
+    Map<String, dynamic> map = jsonDecode(resp.body);
+
+    return SpotifyCurrentPlaybackModel.fromJson(map);
+  }
+
+  Map<String, String> _getAuthHeader(String accessToken) {
+    return {'Authorization': 'Bearer $accessToken'};
+  }
+
+  String _getBase64Id() {
     var res = "${Constants.CLIENT_ID}:197776909380429dac9d7263317b6811";
     var bytes = utf8.encode(res);
+
     return base64.encode(bytes);
   }
 }
