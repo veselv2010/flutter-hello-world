@@ -1,13 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'package:playlist_app/constants.dart' as Constants;
-import 'package:playlist_app/models/spotifyCurrentPlaybackModel.dart';
 import 'dart:convert';
-import 'models/spotifyTracksModel.dart';
+import 'package:playlist_app/models/savedTracksModel.dart';
+import 'package:playlist_app/models/currentPlaybackModel.dart'
+    as Playback;
 
-class SpotifyClient {
+class ApiClient {
   List<Track> _cachedTracks;
 
-  SpotifyClient() {
+  ApiClient() {
     _cachedTracks = List();
   }
 
@@ -38,7 +39,7 @@ class SpotifyClient {
     var resp = await http.get(url, headers: _getAuthHeader(accessToken));
 
     Map<String, dynamic> map = jsonDecode(resp.body);
-    var model = SpotifyTracksModel.fromJson(map);
+    var model = SavedTracksModel.fromJson(map);
 
     model.items.forEach((element) => _cachedTracks.add(element.track));
 
@@ -49,14 +50,14 @@ class SpotifyClient {
     return _cachedTracks;
   }
 
-  Future<SpotifyCurrentPlaybackModel> getCurrentPlaybackInfo(
+  Future<Playback.CurrentPlaybackModel> getCurrentPlaybackInfo(
       String accessToken) async {
     var resp = await http.get(Constants.CURRENT_PLAYBACK_ENDPOINT,
         headers: _getAuthHeader(accessToken));
 
     Map<String, dynamic> map = jsonDecode(resp.body);
 
-    return SpotifyCurrentPlaybackModel.fromJson(map);
+    return Playback.CurrentPlaybackModel.fromJson(map);
   }
 
   Map<String, String> _getAuthHeader(String accessToken) {
@@ -68,5 +69,12 @@ class SpotifyClient {
     var bytes = utf8.encode(res);
 
     return base64.encode(bytes);
+  }
+
+  static String getFormattedDuration(int durationMs) {
+    String seconds = ((durationMs % 60)).toString();
+    String res = '${(durationMs ~/ 1000 ~/ 60)}:';
+
+    return seconds.length > 1 ? res + seconds : res + "0" + seconds;
   }
 }

@@ -1,4 +1,4 @@
-class SpotifyTracksModel {
+class SavedTracksModel {
   String href;
   List<Items> items;
   int limit;
@@ -7,7 +7,7 @@ class SpotifyTracksModel {
 
   int total;
 
-  SpotifyTracksModel(
+  SavedTracksModel(
       {this.href,
       this.items,
       this.limit,
@@ -16,7 +16,7 @@ class SpotifyTracksModel {
 
       this.total});
 
-  SpotifyTracksModel.fromJson(Map<String, dynamic> json) {
+  SavedTracksModel.fromJson(Map<String, dynamic> json) {
     href = json['href'];
     if (json['items'] != null) {
       items = new List<Items>();

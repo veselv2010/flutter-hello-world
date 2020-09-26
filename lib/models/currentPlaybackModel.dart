@@ -1,4 +1,4 @@
-class SpotifyCurrentPlaybackModel {
+class CurrentPlaybackModel {
   Device device;
   bool shuffleState;
   String repeatState;
@@ -10,7 +10,7 @@ class SpotifyCurrentPlaybackModel {
   Actions actions;
   bool isPlaying;
 
-  SpotifyCurrentPlaybackModel(
+  CurrentPlaybackModel(
       {this.device,
       this.shuffleState,
       this.repeatState,
@@ -22,7 +22,7 @@ class SpotifyCurrentPlaybackModel {
       this.actions,
       this.isPlaying});
 
-  SpotifyCurrentPlaybackModel.fromJson(Map<String, dynamic> json) {
+  CurrentPlaybackModel.fromJson(Map<String, dynamic> json) {
     device =
         json['device'] != null ? new Device.fromJson(json['device']) : null;
     shuffleState = json['shuffle_state'];

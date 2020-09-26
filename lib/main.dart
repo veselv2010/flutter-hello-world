@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'spotifyAuthWidget.dart';
+import 'package:playlist_app/authWidget.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SpotifyAuthWidget(),//MyHomePage(title: 'Flutter Demo Home Page'),
+      home: AuthWidget(),    
     );
   }
 }

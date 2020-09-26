@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:playlist_app/models/spotifyTracksModel.dart';
+import 'package:playlist_app/models/savedTracksModel.dart';
+import 'package:playlist_app/apiClient.dart';
+import 'package:playlist_app/constants.dart' as Constants;
 
-class SpotifyTracksWidget extends StatefulWidget {
-  final List<Track> tracks;
+class SavedTracksWidget extends StatelessWidget {
+  List<Track> _savedTracks;
+  ApiClient _client;
 
-  SpotifyTracksWidget(this.tracks);
-
-  @override
-  _SpotifyTracksWidgetState createState() => _SpotifyTracksWidgetState(tracks);
-}
-
-class _SpotifyTracksWidgetState extends State<SpotifyTracksWidget> {
-  _SpotifyTracksWidgetState(List<Track> tracks) {
-    this._tracks = tracks;
+  SavedTracksWidget(ApiClient spotifyClient) {
+    this._client = spotifyClient;
+    _init();
   }
 
-  List<Track> _tracks;
+  Future _init() async {
+    this._savedTracks =
+        await _client.getSavedTracks(Constants.accessToken, null);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        itemCount: _tracks.length,
+        itemCount: _savedTracks.length,
         itemBuilder: (context, index) {
-          return TrackListItem(_tracks[index]);
+          return TrackListItem(_savedTracks[index]);
         },
       ),
     );
@@ -46,7 +46,7 @@ class TrackListItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(_getAllArtists(track.artists)),
-              Text(_getFormattedDuration(track.durationMs)),
+              Text(ApiClient.getFormattedDuration(track.durationMs)),
             ],
           ),
         ]));
@@ -60,12 +60,5 @@ class TrackListItem extends StatelessWidget {
     }
 
     return res;
-  }
-
-  String _getFormattedDuration(int durationMs) {
-    String seconds = ((durationMs % 60)).toString();
-    String res = '${(durationMs ~/ 1000 ~/ 60)}:';
-
-    return seconds.length > 1 ? res + seconds : res + "0" + seconds;
   }
 }
