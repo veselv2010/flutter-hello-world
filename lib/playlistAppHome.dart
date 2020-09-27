@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:playlist_app/constants.dart' as Constants;
 import 'package:flutter/widgets.dart';
 import 'package:playlist_app/apiClient.dart';
 import 'package:playlist_app/playingWidget.dart';
 import 'package:playlist_app/savedTracksWidget.dart';
-import 'dart:async';
 
 class PlaylistAppHome extends StatefulWidget {
   final ApiClient spotifyClient = ApiClient();

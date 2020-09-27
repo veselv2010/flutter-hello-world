@@ -10,6 +10,8 @@ class Playback {
   final String progress;
   final String currentDevice;
   final String id;
+  final int durationMs;
+  final int progressMs;
 
   Playback(
       {this.isPlaying,
@@ -20,7 +22,9 @@ class Playback {
       this.duration,
       this.progress,
       this.id,
-      this.name});
+      this.name,
+      this.durationMs,
+      this.progressMs});
 
   @override
   bool operator ==(Object other) =>
@@ -36,10 +40,12 @@ class Playback {
       duration: _getFormattedDuration(resp.item.durationMs),
       progress: _getRemainingTime(resp.progressMs, resp.item.durationMs),
       id: resp.item.id,
-      name: resp.item.name);
+      name: resp.item.name,
+      durationMs: resp.item.durationMs,
+      progressMs: resp.progressMs);
 
-  String _getFormattedArtists(List<Resp.Artists> artists){
-        String res = "";
+  String _getFormattedArtists(List<Resp.Artists> artists) {
+    String res = "";
     for (var a in artists) {
       res += a.name;
       if (artists.indexOf(a) != artists.length - 1) res += ", ";
@@ -49,16 +55,17 @@ class Playback {
   }
 
   String _getRemainingTime(int currentMs, int durationMs) {
-    String seconds = (((durationMs - currentMs) % 60)).toString();
-    String res = '-${(currentMs ~/ 1000 ~/ 60)}:';
+    String seconds = ((durationMs - currentMs) ~/ 1000 % 60).toString();
+    String minutes =
+        '-' + ((durationMs - currentMs) ~/ 1000 ~/ 60).toString() + ':';
 
-    return seconds.length > 1 ? res + seconds : res + "0" + seconds;
+    return seconds.length > 1 ? minutes + seconds : minutes + "0" + seconds;
   }
 
   String _getFormattedDuration(int durationMs) {
-    String seconds = ((durationMs % 60)).toString();
-    String res = '${(durationMs ~/ 1000 ~/ 60)}:';
+    String seconds = (durationMs ~/ 1000 % 60).toString();
+    String minutes = (durationMs ~/ 1000 ~/ 60).toString() + ':';
 
-    return seconds.length > 1 ? res + seconds : res + "0" + seconds;
+    return seconds.length > 1 ? minutes + seconds : minutes + "0" + seconds;
   }
 }
