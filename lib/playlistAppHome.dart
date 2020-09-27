@@ -17,8 +17,6 @@ class PlaylistAppHome extends StatefulWidget {
 class _PlaylistAppHomeState extends State<PlaylistAppHome> {
   int _selectedItem = 0;
   var _spotifyClient;
-  var playbackInfo;
-  var playbackTimer;
   var cachedTracks;
 
   static List<Widget> _widgetOptions;
@@ -26,15 +24,9 @@ class _PlaylistAppHomeState extends State<PlaylistAppHome> {
   _PlaylistAppHomeState(ApiClient spotifyClient) {
     this._spotifyClient = spotifyClient;
 
-    if (Constants.accessToken != "") {
-      playbackTimer = new Timer.periodic(Duration(seconds: 1), (timer) {
-        _spotifyClient.getCurrentPlaybackInfo(Constants.accessToken);
-      });
-    }
-
     _widgetOptions = [
       SavedTracksWidget(_spotifyClient),
-      PlayingWidget(_spotifyClient),
+      PlayingWidget(),
     ];
   }
 
