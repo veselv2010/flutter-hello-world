@@ -16,10 +16,6 @@ class AuthWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Auth'),
-        toolbarHeight: 12.0,
-      ),
       body: Builder(builder: (BuildContext context) {
         return WebView(
           initialUrl: Constants.AUTH_URL,

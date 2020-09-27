@@ -13,6 +13,13 @@ const String REDIRECT_URI = "https://blank.org/";
 const String ACCESS_TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const String SAVED_TRACKS_ENDPOINT = "https://api.spotify.com/v1/me/tracks";
 const String CURRENT_PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player";
+const String PLAYER_NEXT_ENDPOINT = "https://api.spotify.com/v1/me/player/next";
+const String PLAYER_PREV_ENDPOINT =
+    "https://api.spotify.com/v1/me/player/previous";
+const String PLAYER_PAUSE_ENDPOINT =
+    "https://api.spotify.com/v1/me/player/pause";
+const String PLAYER_RESUME_ENDPOINT =
+    "https://api.spotify.com/v1/me/player/play";
 const String AUTH_URL =
     "https://accounts.spotify.com/authorize?client_id=$CLIENT_ID&response_type=code&redirect_uri=$REDIRECT_URI&state=fdsfdsfds&scope=$SCOPES&show_dialog=true/";
 

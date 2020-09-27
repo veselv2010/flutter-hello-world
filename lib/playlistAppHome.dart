@@ -8,8 +8,7 @@ class PlaylistAppHome extends StatefulWidget {
   final ApiClient spotifyClient = ApiClient();
 
   @override
-  _PlaylistAppHomeState createState() =>
-      _PlaylistAppHomeState(spotifyClient);
+  _PlaylistAppHomeState createState() => _PlaylistAppHomeState(spotifyClient);
 }
 
 class _PlaylistAppHomeState extends State<PlaylistAppHome> {

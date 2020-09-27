@@ -12,6 +12,7 @@ class Playback {
   final String id;
   final int durationMs;
   final int progressMs;
+  final String deviceId;
 
   Playback(
       {this.isPlaying,
@@ -24,12 +25,8 @@ class Playback {
       this.id,
       this.name,
       this.durationMs,
-      this.progressMs});
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Playback && id == other.id && progress == other.progress;
+      this.progressMs,
+      this.deviceId,});
 
   Playback fromResponse(Resp.CurrentPlaybackModel resp) => new Playback(
       isPlaying: resp.isPlaying,
@@ -42,7 +39,10 @@ class Playback {
       id: resp.item.id,
       name: resp.item.name,
       durationMs: resp.item.durationMs,
-      progressMs: resp.progressMs);
+      progressMs: resp.progressMs,
+      deviceId: resp.device.id,);
+
+  
 
   String _getFormattedArtists(List<Resp.Artists> artists) {
     String res = "";

@@ -2,8 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:playlist_app/constants.dart' as Constants;
 import 'dart:convert';
 import 'package:playlist_app/models/savedTracksModel.dart';
-import 'package:playlist_app/models/currentPlaybackModel.dart'
-    as Playback;
+import 'package:playlist_app/models/currentPlaybackModel.dart' as Playback;
 
 class ApiClient {
   List<Track> _cachedTracks;
@@ -13,24 +12,19 @@ class ApiClient {
   }
 
   Future<String> getAccessToken(String code) async {
-    try {
-      var resp = await http.post(Constants.ACCESS_TOKEN_ENDPOINT, body: {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': Constants.REDIRECT_URI
-      }, headers: {
-        'Authorization': 'Basic ${_getBase64Id()}'
-      });
+    var resp = await http.post(Constants.ACCESS_TOKEN_ENDPOINT, body: {
+      'grant_type': 'authorization_code',
+      'code': code,
+      'redirect_uri': Constants.REDIRECT_URI
+    }, headers: {
+      'Authorization': 'Basic ${_getBase64Id()}'
+    });
 
-      Map<String, dynamic> map = jsonDecode(resp.body);
+    Map<String, dynamic> map = jsonDecode(resp.body);
 
-      return map['access_token'];
-    } catch (ex) {
-      return ex;
-    }
+    return map['access_token'];
   }
 
-  //TODO: че-нибудь нагуглить про дженерики
   Future<List<Track>> getSavedTracks(String accessToken, String url) async {
     url = url == null
         ? Constants.SAVED_TRACKS_ENDPOINT + "?limit=50" + "&offset=0"
@@ -71,6 +65,42 @@ class ApiClient {
     return base64.encode(bytes);
   }
 
+  Future<void> nextTrack(String accessToken, {String deviceId}) async {
+    String url = deviceId == null || deviceId == ""
+        ? Constants.PLAYER_NEXT_ENDPOINT
+        : Constants.PLAYER_NEXT_ENDPOINT + "?device_id=$deviceId";
+
+    await http.post(url, headers: _getAuthHeader(accessToken));
+  }
+
+  Future<void> prevTrack(String accessToken, {String deviceId}) async {
+    String url = deviceId == null || deviceId == ""
+        ? Constants.PLAYER_PREV_ENDPOINT
+        : Constants.PLAYER_PREV_ENDPOINT + "?device_id=$deviceId";
+
+    await http.post(url, headers: _getAuthHeader(accessToken));
+  }
+
+  Future<void> pausePlayback(String accessToken, {String deviceId}) async {
+    String url = deviceId == null || deviceId == ""
+        ? Constants.PLAYER_PAUSE_ENDPOINT
+        : Constants.PLAYER_PAUSE_ENDPOINT + "?device_id=$deviceId";
+
+    await http.put(url, headers: _getAuthHeader(accessToken));
+  }
+
+  Future<void> resumePlayback(String accessToken, String positionMs,
+      {String deviceId}) async {
+    String url = deviceId == null || deviceId == ""
+        ? Constants.PLAYER_RESUME_ENDPOINT
+        : Constants.PLAYER_RESUME_ENDPOINT + "?device_id=$deviceId";
+
+    await http.put(url,
+        headers: _getAuthHeader(accessToken),
+        body: '{"position_ms": $positionMs}');
+  }
+
+  //TODO: уничтожить
   static String getFormattedDuration(int durationMs) {
     String seconds = ((durationMs % 60)).toString();
     String res = '${(durationMs ~/ 1000 ~/ 60)}:';

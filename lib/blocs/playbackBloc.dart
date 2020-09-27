@@ -20,7 +20,7 @@ class PlaybackBloc {
   PlaybackBloc() {
     _playback = Playback();
     playbackEventSink.add(PlaybackUpdateEvent());
-    
+
     _playbackEventController.stream.listen(_eventToState);
 
     Timer.periodic(Duration(seconds: 1),
@@ -29,11 +29,11 @@ class PlaybackBloc {
 
   void _eventToState(PlaybackEvent event) async {
     if (event is NextTrackEvent) {
-      //TODO
+      await client.nextTrack(Constants.accessToken);
     } else if (event is PrevTrackEvent) {
-      //TODO
+      await client.prevTrack(Constants.accessToken);
     } else if (event is ChangeIsPlayingStateEvent) {
-      //TODO
+      await _handleStateEvent();
     } else if (event is PlaybackUpdateEvent) {
       _playback = _playback.fromResponse(
           await client.getCurrentPlaybackInfo(Constants.accessToken));
@@ -46,5 +46,13 @@ class PlaybackBloc {
   void dispose() {
     _playbackStateController.close();
     _playbackEventController.close();
+  }
+
+  Future<void> _handleStateEvent() async {
+    if (_playback.isPlaying)
+      await client.pausePlayback(Constants.accessToken);
+    else
+      await client.resumePlayback(
+          Constants.accessToken, _playback.progressMs.toString());
   }
 }

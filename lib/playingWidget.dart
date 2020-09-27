@@ -54,9 +54,14 @@ class _PlayingWidgetState extends State<PlayingWidget> {
                         Container(
                             padding: EdgeInsets.only(top: 10, bottom: 20),
                             child: Column(children: [
-                              Text('${snapshot.data.name}',
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+                              Text(
+                                '${snapshot.data.name}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
                               Text(
                                   '${snapshot.data.formattedArtists} — ${snapshot.data.album}',
                                   style: TextStyle(
@@ -67,27 +72,21 @@ class _PlayingWidgetState extends State<PlayingWidget> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Container(
-                              child: GestureDetector(
+                            InkWell(
                                 onTap: () => _bloc.playbackEventSink
                                     .add(PrevTrackEvent()),
                                 child: Icon(Icons.skip_previous, size: 64),
-                              ),
-                            ),
-                            Container(
-                              child: GestureDetector(
+                                borderRadius: BorderRadius.circular(32)),
+                            InkWell(
                                 onTap: () => _bloc.playbackEventSink
                                     .add(ChangeIsPlayingStateEvent()),
-                                child: Icon(Icons.pause, size: 64),
-                              ),
-                            ),
-                            Container(
-                              child: GestureDetector(
+                                child: _getPlaybackStateIcon(snapshot.data.isPlaying),
+                                borderRadius: BorderRadius.circular(32)),
+                            InkWell(
                                 onTap: () => _bloc.playbackEventSink
                                     .add(NextTrackEvent()),
                                 child: Icon(Icons.skip_next, size: 64),
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(32)),
                           ],
                         ),
                         Padding(
@@ -110,4 +109,7 @@ class _PlayingWidgetState extends State<PlayingWidget> {
       ),
     );
   }
+
+  Icon _getPlaybackStateIcon(bool isPlaying) =>
+      isPlaying ? Icon(Icons.pause, size: 64) : Icon(Icons.play_arrow, size: 64);
 }
