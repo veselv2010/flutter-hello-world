@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:playlist_app/spotifyApi/apiClient.dart';
 import 'package:playlist_app/playingWidget.dart';
 import 'package:playlist_app/savedTracksWidget.dart';
 
 class PlaylistAppHome extends StatefulWidget {
-  final ApiClient spotifyClient = ApiClient();
 
   @override
-  _PlaylistAppHomeState createState() => _PlaylistAppHomeState(spotifyClient);
+  _PlaylistAppHomeState createState() => _PlaylistAppHomeState();
 }
 
 class _PlaylistAppHomeState extends State<PlaylistAppHome> {
@@ -16,7 +14,7 @@ class _PlaylistAppHomeState extends State<PlaylistAppHome> {
 
   static List<Widget> _widgetOptions;
 
-  _PlaylistAppHomeState(ApiClient spotifyClient) {
+  _PlaylistAppHomeState() {
 
     _widgetOptions = [
       SavedTracksWidget(),

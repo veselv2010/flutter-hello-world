@@ -2,6 +2,7 @@ import 'package:playlist_app/spotifyApi/models/currentPlaybackModel.dart'
     as PlaybackResp;
 import 'package:playlist_app/spotifyApi/models/savedTracksModel.dart'
     as SavedTracksResp;
+import 'package:playlist_app/blocs/models/savedTrack.dart';
 
 class TrackInfoFormatter {
   //TODO: generics
@@ -38,5 +39,20 @@ class TrackInfoFormatter {
     String minutes = (durationMs ~/ 1000 ~/ 60).toString() + ':';
 
     return seconds.length > 1 ? minutes + seconds : minutes + "0" + seconds;
+  }
+
+ List<SavedTrack> fromRespList(List<SavedTracksResp.Track> tracks) {
+    var list = List<SavedTrack>();
+    tracks.forEach(
+      (element) => list.add(
+        new SavedTrack(
+            formattedArtists: getFormattedArtistsFromSaved(element.artists),
+            formattedDuration: getFormattedDuration(element.durationMs),
+            id: element.id,
+            name: element.name),
+      ),
+    );
+
+    return list;
   }
 }

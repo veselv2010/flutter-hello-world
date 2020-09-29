@@ -1,4 +1,6 @@
 import 'package:http/http.dart' as http;
+import 'package:playlist_app/blocs/models/savedTrack.dart';
+import 'package:playlist_app/blocs/trackInfoFormatter.dart';
 import 'package:playlist_app/constants.dart' as Constants;
 import 'dart:convert';
 import 'package:playlist_app/spotifyApi/models/savedTracksModel.dart';
@@ -27,7 +29,8 @@ class ApiClient {
   }
 
   //TODO: разнести на два метода
-  Future<List<Track>> getSavedTracks(String accessToken, String url) async {
+  Future<List<SavedTrack>> getSavedTracks(
+      String accessToken, String url) async {
     url = url == null
         ? Constants.SAVED_TRACKS_ENDPOINT + "?limit=50" + "&offset=0"
         : url;
@@ -43,7 +46,9 @@ class ApiClient {
 
     if (nextUrl != null) await getSavedTracks(accessToken, nextUrl);
 
-    return _cachedTracks;
+    var formatter = TrackInfoFormatter();
+
+    return formatter.fromRespList(_cachedTracks);
   }
 
   Future<Playback.CurrentPlaybackModel> getCurrentPlaybackInfo(

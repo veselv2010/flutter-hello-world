@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:playlist_app/blocs/models/savedTrack.dart';
-import 'package:playlist_app/blocs/savedTracksBloc.dart';
-import 'package:playlist_app/blocs/savedTracksEvents.dart';
+import 'package:playlist_app/spotifyApi/apiClient.dart';
+import 'package:playlist_app/constants.dart' as Constants;
 
-class SavedTracksWidget extends StatelessWidget {
-  final SavedTracksBloc _bloc = SavedTracksBloc();
+class SavedTracksWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _SavedTrackWidgetState();
+}
 
-  SavedTracksWidget() {
-    _bloc.savedTracksEventSink.add(SavedTracksInitialized());
+class _SavedTrackWidgetState extends State<SavedTracksWidget> {
+  final ApiClient _client = ApiClient();
+
+  Future<List<SavedTrack>> _cachedTracks;
+
+  _SavedTrackWidgetState() {
+    _cachedTracks = _client.getSavedTracks(Constants.accessToken, null);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: StreamBuilder(
-          stream: _bloc.savedTracks,
-          initialData: [],
-          builder: (context, snapshot) => ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, index) =>
-                TrackListItem(snapshot.data[index]),
-          ),
-        ),
-      ),
+    return FutureBuilder(
+      future: _cachedTracks,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Scaffold(
+            body: SafeArea(
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) =>
+                    TrackListItem(snapshot.data[index]),
+              ),
+            ),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }
