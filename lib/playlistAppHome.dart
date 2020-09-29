@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:playlist_app/apiClient.dart';
+import 'package:playlist_app/spotifyApi/apiClient.dart';
 import 'package:playlist_app/playingWidget.dart';
 import 'package:playlist_app/savedTracksWidget.dart';
 
@@ -13,16 +13,13 @@ class PlaylistAppHome extends StatefulWidget {
 
 class _PlaylistAppHomeState extends State<PlaylistAppHome> {
   int _selectedItem = 0;
-  var _spotifyClient;
-  var cachedTracks;
 
   static List<Widget> _widgetOptions;
 
   _PlaylistAppHomeState(ApiClient spotifyClient) {
-    this._spotifyClient = spotifyClient;
 
     _widgetOptions = [
-      SavedTracksWidget(_spotifyClient),
+      SavedTracksWidget(),
       PlayingWidget(),
     ];
   }

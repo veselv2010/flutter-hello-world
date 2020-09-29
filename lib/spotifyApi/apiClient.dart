@@ -1,8 +1,9 @@
 import 'package:http/http.dart' as http;
 import 'package:playlist_app/constants.dart' as Constants;
 import 'dart:convert';
-import 'package:playlist_app/models/savedTracksModel.dart';
-import 'package:playlist_app/models/currentPlaybackModel.dart' as Playback;
+import 'package:playlist_app/spotifyApi/models/savedTracksModel.dart';
+import 'package:playlist_app/spotifyApi/models/currentPlaybackModel.dart'
+    as Playback;
 
 class ApiClient {
   List<Track> _cachedTracks;
@@ -25,6 +26,7 @@ class ApiClient {
     return map['access_token'];
   }
 
+  //TODO: разнести на два метода
   Future<List<Track>> getSavedTracks(String accessToken, String url) async {
     url = url == null
         ? Constants.SAVED_TRACKS_ENDPOINT + "?limit=50" + "&offset=0"
@@ -48,6 +50,8 @@ class ApiClient {
       String accessToken) async {
     var resp = await http.get(Constants.CURRENT_PLAYBACK_ENDPOINT,
         headers: _getAuthHeader(accessToken));
+
+    if (resp.statusCode == 204) return null;
 
     Map<String, dynamic> map = jsonDecode(resp.body);
 
@@ -98,13 +102,5 @@ class ApiClient {
     await http.put(url,
         headers: _getAuthHeader(accessToken),
         body: '{"position_ms": $positionMs}');
-  }
-
-  //TODO: уничтожить
-  static String getFormattedDuration(int durationMs) {
-    String seconds = ((durationMs % 60)).toString();
-    String res = '${(durationMs ~/ 1000 ~/ 60)}:';
-
-    return seconds.length > 1 ? res + seconds : res + "0" + seconds;
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:playlist_app/apiClient.dart';
+import 'package:playlist_app/spotifyApi/apiClient.dart';
 import 'package:playlist_app/playlistAppHome.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';

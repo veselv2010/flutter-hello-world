@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:playlist_app/blocs/models/playback.dart';
 import 'package:playlist_app/blocs/playbackEvents.dart';
-import 'package:playlist_app/apiClient.dart';
+import 'package:playlist_app/spotifyApi/apiClient.dart';
 import 'package:playlist_app/constants.dart' as Constants;
 
 class PlaybackBloc {
@@ -19,9 +19,9 @@ class PlaybackBloc {
 
   PlaybackBloc() {
     _playback = Playback();
-    playbackEventSink.add(PlaybackUpdateEvent());
 
     _playbackEventController.stream.listen(_eventToState);
+    playbackEventSink.add(PlaybackUpdateEvent());
 
     Timer.periodic(Duration(seconds: 1),
         (timer) => playbackEventSink.add(PlaybackUpdateEvent()));
@@ -35,8 +35,7 @@ class PlaybackBloc {
     } else if (event is ChangeIsPlayingStateEvent) {
       await _handleStateEvent();
     } else if (event is PlaybackUpdateEvent) {
-      _playback = _playback.fromResponse(
-          await client.getCurrentPlaybackInfo(Constants.accessToken));
+      await _handlePlaybackUpdateEvent();
     } else {
       throw Exception("there is no such event");
     }
@@ -54,5 +53,12 @@ class PlaybackBloc {
     else
       await client.resumePlayback(
           Constants.accessToken, _playback.progressMs.toString());
+  }
+
+  Future<void> _handlePlaybackUpdateEvent() async {
+    var resp = await client.getCurrentPlaybackInfo(Constants.accessToken);
+
+    _playback =
+        resp == null ? _playback.getEmpty() : _playback.fromResponse(resp);
   }
 }

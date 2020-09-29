@@ -1,4 +1,6 @@
-import 'package:playlist_app/models/currentPlaybackModel.dart' as Resp;
+import 'package:playlist_app/blocs/trackInfoFormatter.dart';
+import 'package:playlist_app/spotifyApi/models/currentPlaybackModel.dart'
+    as Resp;
 
 class Playback {
   final bool isPlaying;
@@ -14,58 +16,48 @@ class Playback {
   final int progressMs;
   final String deviceId;
 
-  Playback(
-      {this.isPlaying,
-      this.album,
-      this.albumCoverUrl,
-      this.formattedArtists,
-      this.currentDevice,
-      this.duration,
-      this.progress,
-      this.id,
-      this.name,
-      this.durationMs,
-      this.progressMs,
-      this.deviceId,});
+  final TrackInfoFormatter formatter = TrackInfoFormatter();
+
+  Playback({
+    this.isPlaying,
+    this.album,
+    this.albumCoverUrl,
+    this.formattedArtists,
+    this.currentDevice,
+    this.duration,
+    this.progress,
+    this.id,
+    this.name,
+    this.durationMs,
+    this.progressMs,
+    this.deviceId,
+  });
 
   Playback fromResponse(Resp.CurrentPlaybackModel resp) => new Playback(
       isPlaying: resp.isPlaying,
       album: resp.item.album.name,
       albumCoverUrl: resp.item.album.images[0].url,
-      formattedArtists: _getFormattedArtists(resp.item.artists),
+      formattedArtists: formatter.getFormattedArtistsFromPlayback(resp.item.artists),
       currentDevice: resp.device.name,
-      duration: _getFormattedDuration(resp.item.durationMs),
-      progress: _getRemainingTime(resp.progressMs, resp.item.durationMs),
+      duration: formatter.getFormattedDuration(resp.item.durationMs),
+      progress: formatter.getRemainingTime(resp.progressMs, resp.item.durationMs),
       id: resp.item.id,
       name: resp.item.name,
       durationMs: resp.item.durationMs,
       progressMs: resp.progressMs,
-      deviceId: resp.device.id,);
+      deviceId: resp.device.id);
 
-  
-
-  String _getFormattedArtists(List<Resp.Artists> artists) {
-    String res = "";
-    for (var a in artists) {
-      res += a.name;
-      if (artists.indexOf(a) != artists.length - 1) res += ", ";
-    }
-
-    return res;
-  }
-
-  String _getRemainingTime(int currentMs, int durationMs) {
-    String seconds = ((durationMs - currentMs) ~/ 1000 % 60).toString();
-    String minutes =
-        '-' + ((durationMs - currentMs) ~/ 1000 ~/ 60).toString() + ':';
-
-    return seconds.length > 1 ? minutes + seconds : minutes + "0" + seconds;
-  }
-
-  String _getFormattedDuration(int durationMs) {
-    String seconds = (durationMs ~/ 1000 % 60).toString();
-    String minutes = (durationMs ~/ 1000 ~/ 60).toString() + ':';
-
-    return seconds.length > 1 ? minutes + seconds : minutes + "0" + seconds;
-  }
+  Playback getEmpty() => new Playback(
+      album: "Nothing is playing!",
+      albumCoverUrl: null,
+      currentDevice: "Nothing is playing!",
+      deviceId: "Nothing is playing!",
+      duration: "0",
+      durationMs: 10000,
+      formattedArtists: "Nothing is playing!",
+      id: "Nothing is playing!",
+      isPlaying: false,
+      name: "Nothing is playing!",
+      progress: "0",
+      progressMs: 0);
 }
