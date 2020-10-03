@@ -9,18 +9,19 @@ import 'package:playlist_app/spotifyApi/models/currentPlaybackModel.dart'
 
 class ApiClient {
   List<Track> _cachedTracks;
-
-  ApiClient() {
+  http.Client _http;
+  ApiClient({httpClient}) {
     _cachedTracks = List();
+    _http = httpClient ?? http.Client;
   }
 
   Future<String> getAccessToken(String code) async {
-    var resp = await http.post(Constants.ACCESS_TOKEN_ENDPOINT, body: {
+    var resp = await _http.post(Constants.ACCESS_TOKEN_ENDPOINT, body: {
       'grant_type': 'authorization_code',
       'code': code,
       'redirect_uri': Constants.REDIRECT_URI
     }, headers: {
-      'Authorization': 'Basic ${_getBase64Id()}'
+      'Authorization': 'Basic ${getBase64Id()}'
     });
 
     Map<String, dynamic> map = jsonDecode(resp.body);
@@ -35,7 +36,7 @@ class ApiClient {
         ? Constants.SAVED_TRACKS_ENDPOINT + "?limit=50" + "&offset=0"
         : url;
 
-    var resp = await http.get(url, headers: _getAuthHeader(accessToken));
+    var resp = await _http.get(url, headers: getAuthHeader(accessToken));
 
     Map<String, dynamic> map = jsonDecode(resp.body);
     var model = SavedTracksModel.fromJson(map);
@@ -53,9 +54,10 @@ class ApiClient {
 
   Future<Playback.CurrentPlaybackModel> getCurrentPlaybackInfo(
       String accessToken) async {
-    var resp = await http.get(Constants.CURRENT_PLAYBACK_ENDPOINT,
-        headers: _getAuthHeader(accessToken));
+    var resp = await _http.get(Constants.CURRENT_PLAYBACK_ENDPOINT,
+        headers: getAuthHeader(accessToken));
 
+    //nothing is playing
     if (resp.statusCode == 204) return null;
 
     Map<String, dynamic> map = jsonDecode(resp.body);
@@ -63,11 +65,11 @@ class ApiClient {
     return Playback.CurrentPlaybackModel.fromJson(map);
   }
 
-  Map<String, String> _getAuthHeader(String accessToken) {
+  Map<String, String> getAuthHeader(String accessToken) {
     return {'Authorization': 'Bearer $accessToken'};
   }
 
-  String _getBase64Id() {
+  String getBase64Id() {
     var res = "${Constants.CLIENT_ID}:197776909380429dac9d7263317b6811";
     var bytes = utf8.encode(res);
 
@@ -79,7 +81,7 @@ class ApiClient {
         ? Constants.PLAYER_NEXT_ENDPOINT
         : Constants.PLAYER_NEXT_ENDPOINT + "?device_id=$deviceId";
 
-    await http.post(url, headers: _getAuthHeader(accessToken));
+    await _http.post(url, headers: getAuthHeader(accessToken));
   }
 
   Future<void> prevTrack(String accessToken, {String deviceId}) async {
@@ -87,7 +89,7 @@ class ApiClient {
         ? Constants.PLAYER_PREV_ENDPOINT
         : Constants.PLAYER_PREV_ENDPOINT + "?device_id=$deviceId";
 
-    await http.post(url, headers: _getAuthHeader(accessToken));
+    await _http.post(url, headers: getAuthHeader(accessToken));
   }
 
   Future<void> pausePlayback(String accessToken, {String deviceId}) async {
@@ -95,7 +97,7 @@ class ApiClient {
         ? Constants.PLAYER_PAUSE_ENDPOINT
         : Constants.PLAYER_PAUSE_ENDPOINT + "?device_id=$deviceId";
 
-    await http.put(url, headers: _getAuthHeader(accessToken));
+    await _http.put(url, headers: getAuthHeader(accessToken));
   }
 
   Future<void> resumePlayback(String accessToken, String positionMs,
@@ -104,8 +106,8 @@ class ApiClient {
         ? Constants.PLAYER_RESUME_ENDPOINT
         : Constants.PLAYER_RESUME_ENDPOINT + "?device_id=$deviceId";
 
-    await http.put(url,
-        headers: _getAuthHeader(accessToken),
+    await _http.put(url,
+        headers: getAuthHeader(accessToken),
         body: '{"position_ms": $positionMs}');
   }
 }
