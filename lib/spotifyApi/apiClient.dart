@@ -29,7 +29,7 @@ class ApiClient {
     return map['access_token'];
   }
 
-  //TODO: разнести на два метода
+  //TODO: разнести на два метода, уничтожить рекурсию
   Future<List<SavedTrack>> getSavedTracks(
       String accessToken, String url) async {
     url = url == null
@@ -37,6 +37,8 @@ class ApiClient {
         : url;
 
     var resp = await _http.get(url, headers: getAuthHeader(accessToken));
+
+    if (resp.statusCode == 204) return null;
 
     Map<String, dynamic> map = jsonDecode(resp.body);
     var model = SavedTracksModel.fromJson(map);
